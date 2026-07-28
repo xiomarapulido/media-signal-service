@@ -9,7 +9,8 @@
     "start": "tsx src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:db": "tsx src/scripts/testConnection.ts",
-    "seed": "tsx src/database/seed.ts"
+    "seed": "tsx src/database/seed.ts",
+    "enrich": "tsx src/scripts/enrichArticles.ts"
   },
   "keywords": [],
   "author": "",
