@@ -13,9 +13,15 @@ async function testConnection(): Promise<void> {
         version() AS version;
     `);
 
-    console.log("✅ Successfully connected to PostgreSQL!");
-    console.log(`Database Time : ${result.rows[0].now}`);
-    console.log(`PostgreSQL    : ${result.rows[0].version}`);
+    console.log("Successfully connected to PostgreSQL!");
+    const row = result.rows[0];
+
+    if (!row) {
+      throw new Error("Database test query returned no rows.");
+    }
+
+    console.log(`Database Time : ${row.now}`);
+    console.log(`PostgreSQL    : ${row.version}`);
   } catch (error) {
     console.error("Failed to connect to PostgreSQL");
     console.error(error);
