@@ -20,6 +20,7 @@ export interface ArticleFilters {
   language?: string;
   dateFrom?: string | Date;
   dateTo?: string | Date;
+  search?: string;
 }
 
 export interface ArticleCursor {

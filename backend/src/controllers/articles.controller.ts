@@ -4,6 +4,10 @@ import {
   getArticleCounts,
   getArticles,
 } from "../services/articles.service.js";
+import {
+  BooleanSearchParserError,
+  BooleanSearchTokenizerError,
+} from "../search/boolean-search.types.js";
 
 export async function getArticlesHandler(
   request: Request,
@@ -29,6 +33,7 @@ export async function getArticlesHandler(
       language: request.query.language as string | undefined,
       dateFrom: request.query.dateFrom as string | undefined,
       dateTo: request.query.dateTo as string | undefined,
+      search: request.query.search as string | undefined,
       limit,
       cursor:
         request.query.cursorPublishedAt && request.query.cursorId
@@ -41,6 +46,17 @@ export async function getArticlesHandler(
 
     response.json(articles);
   } catch (error) {
+    if (
+      error instanceof BooleanSearchTokenizerError ||
+      error instanceof BooleanSearchParserError
+    ) {
+      response.status(400).json({
+        message: error.message,
+        position: error.position,
+      });
+      return;
+    }
+
     console.error(error);
 
     response.status(500).json({

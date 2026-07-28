@@ -1,12 +1,13 @@
 import { pool } from "../database/connection.js";
-
 import {
   addArticleFilters,
   buildWhereClause,
   normalizeLimit,
   validateGroupingInterval,
 } from "../helpers/articles.helpers.js";
-
+import { parseBooleanSearch } from "../search/boolean-search.parser.js";
+import { buildBooleanSearchSql } from "../search/boolean-search.sql.js";
+import { tokenizeBooleanSearch } from "../search/boolean-search.tokenizer.js";
 import type {
   ArticleCount,
   ArticleCountRow,
@@ -17,7 +18,10 @@ import type {
 } from "../types/article.types.js";
 
 /**
- * Fetches articles using keyset pagination.
+ * Fetches articles using keyset pagination based on published_at and id.
+ *
+ * One additional record is requested to determine whether another
+ * page is available without running a separate COUNT query.
  */
 export async function getArticles(
   options: GetArticlesOptions = {},
@@ -27,6 +31,21 @@ export async function getArticles(
   const values: unknown[] = [];
 
   addArticleFilters(options, conditions, values);
+
+  const search = options.search?.trim();
+
+  if (search) {
+    const tokens = tokenizeBooleanSearch(search);
+    const expression = parseBooleanSearch(tokens);
+
+    const searchSql = buildBooleanSearchSql(
+      expression,
+      values.length,
+    );
+
+    conditions.push(searchSql.clause);
+    values.push(...searchSql.values);
+  }
 
   if (options.cursor) {
     values.push(options.cursor.publishedAt);
@@ -45,7 +64,6 @@ export async function getArticles(
 
   const whereClause = buildWhereClause(conditions);
 
-  // Fetch one extra record to determine whether another page exists.
   values.push(limit + 1);
   const limitParameter = `$${values.length}`;
 
@@ -86,7 +104,7 @@ export async function getArticles(
   return {
     articles,
     nextCursor:
-      hasNextPage && lastArticle
+      hasNextPage && lastArticle !== undefined
         ? {
             publishedAt: lastArticle.published_at,
             id: lastArticle.id,
@@ -96,7 +114,7 @@ export async function getArticles(
 }
 
 /**
- * Returns article totals grouped by week or month.
+ * Returns article totals grouped by calendar week or month.
  */
 export async function getArticleCounts(
   interval: string,
