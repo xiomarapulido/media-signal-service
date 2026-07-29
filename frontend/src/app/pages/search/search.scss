@@ -1,0 +1,21 @@
+.article-card {
+  border-radius: 1rem;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.article-card:hover {
+  transform: translateY(-2px);
+}
+
+.article-summary {
+  color: #495057;
+  line-height: 1.65;
+}
+
+.topic-badge {
+  background: linear-gradient(135deg, #6f42c1, #d63384);
+  color: white;
+  padding: 0.55rem 0.8rem;
+}

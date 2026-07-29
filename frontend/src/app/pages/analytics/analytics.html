@@ -1,0 +1,151 @@
+<div class="container py-4">
+  <div class="mb-4">
+    <h1 class="fw-bold mb-1">
+      Article Analytics
+    </h1>
+
+    <p class="text-secondary mb-0">
+      Article counts grouped by
+      {{ interval === 'week' ? 'week' : 'month' }}.
+    </p>
+  </div>
+
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <form
+        class="row g-3 align-items-end"
+        (ngSubmit)="applyFilter()"
+      >
+        <div class="col-md-3">
+          <label
+            for="interval"
+            class="form-label fw-semibold"
+          >
+            Group by
+          </label>
+
+          <select
+            id="interval"
+            name="interval"
+            class="form-select"
+            [(ngModel)]="interval"
+            (change)="onIntervalChange()"
+            [disabled]="loading"
+          >
+            <option value="month">
+              Month
+            </option>
+
+            <option value="week">
+              Week
+            </option>
+          </select>
+        </div>
+
+        <div class="col-md-5">
+          <label
+            for="source"
+            class="form-label fw-semibold"
+          >
+            Filter by source
+          </label>
+
+          <input
+            id="source"
+            name="source"
+            type="text"
+            class="form-control"
+            placeholder="Example: Reuters"
+            [(ngModel)]="source"
+          />
+        </div>
+
+        <div class="col-md-2">
+          <button
+            type="submit"
+            class="btn btn-primary w-100"
+            [disabled]="loading"
+          >
+            Apply
+          </button>
+        </div>
+
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-outline-secondary w-100"
+            (click)="clearFilter()"
+            [disabled]="loading || !source"
+          >
+            Clear
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div
+    *ngIf="loading"
+    class="d-flex justify-content-center py-5"
+  >
+    <div
+      class="spinner-border text-primary"
+      role="status"
+    >
+      <span class="visually-hidden">
+        Loading...
+      </span>
+    </div>
+  </div>
+
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+  >
+    {{ errorMessage }}
+  </div>
+
+  <ng-container
+    *ngIf="!loading && !errorMessage"
+  >
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <p class="text-secondary mb-1">
+              Total articles
+            </p>
+
+            <h2 class="fw-bold mb-0">
+              {{ totalArticles }}
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      *ngIf="!hasData"
+      class="alert alert-info"
+    >
+      No articles were found for the selected
+      filters.
+    </div>
+
+    <div
+      *ngIf="hasData"
+      class="card shadow-sm border-0"
+    >
+      <div class="card-body p-4">
+        <div style="height: 320px;">
+          <canvas
+            baseChart
+            [data]="chartData"
+            [options]="chartOptions"
+            [type]="chartType"
+          ></canvas>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

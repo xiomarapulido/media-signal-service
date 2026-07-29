@@ -1,0 +1,32 @@
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark shadow">
+  <div class="container">
+
+    <a class="navbar-brand fw-bold">
+      Media Signal Service
+    </a>
+
+    <div class="navbar-nav ms-auto">
+
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-link"
+      >
+        Search
+      </a>
+
+      <a
+        routerLink="/analytics"
+        routerLinkActive="active"
+        class="nav-link"
+      >
+        Analytics
+      </a>
+
+    </div>
+
+  </div>
+</nav>
+
+<router-outlet></router-outlet>

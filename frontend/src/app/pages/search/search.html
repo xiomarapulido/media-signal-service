@@ -1,0 +1,165 @@
+<div class="container py-4">
+  <div class="mb-4">
+    <h1 class="fw-bold mb-1">Media Signal Search</h1>
+    <p class="text-secondary mb-0">
+      Search articles using boolean expressions such as
+      <code>AI AND cloud</code>.
+    </p>
+  </div>
+
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <form class="row g-3" (ngSubmit)="search()">
+        <div class="col-md-10">
+          <label
+            for="searchText"
+            class="form-label fw-semibold"
+          >
+            Boolean Search
+          </label>
+
+          <input
+            id="searchText"
+            name="searchText"
+            type="text"
+            class="form-control form-control-lg"
+            placeholder='Example: AI AND "cloud services"'
+            [(ngModel)]="searchText"
+          />
+        </div>
+
+        <div class="col-md-2 d-flex align-items-end">
+          <button
+            type="submit"
+            class="btn btn-primary btn-lg w-100"
+            [disabled]="loading"
+          >
+            Search
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div
+    *ngIf="loading"
+    class="d-flex justify-content-center py-5"
+  >
+    <div
+      class="spinner-border text-primary"
+      role="status"
+    >
+      <span class="visually-hidden">
+        Loading...
+      </span>
+    </div>
+  </div>
+
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+  >
+    {{ errorMessage }}
+  </div>
+
+  <div
+    *ngIf="!loading && !errorMessage && articles.length === 0"
+    class="alert alert-info"
+  >
+    No articles found.
+  </div>
+
+  <div
+    *ngIf="!loading && articles.length > 0"
+    class="row g-4"
+  >
+    <div
+      *ngFor="let article of articles"
+      class="col-12"
+    >
+      <article class="card shadow-sm border-0 article-card">
+        <div class="card-body p-4">
+
+          <div
+            class="d-flex flex-column flex-lg-row justify-content-between gap-3"
+          >
+            <div>
+
+              <h2 class="h5 fw-bold mb-2">
+                {{ article.headline || 'Untitled article' }}
+              </h2>
+
+              <div class="small text-secondary mb-3">
+        <div>
+          <strong>Source:</strong> {{ article.source }}
+        </div>
+
+        <div>
+          <strong>Language:</strong> {{ article.language | uppercase }}
+        </div>
+
+        <div>
+          <strong>Published:</strong>
+          {{ article.published_at | date:'mediumDate' }}
+        </div>
+      </div>
+
+            </div>
+
+            <div>
+
+              <span
+                class="badge rounded-pill px-3 py-2 text-capitalize"
+                [ngClass]="{
+                  'text-bg-success': article.sentiment === 'positive',
+                  'text-bg-danger': article.sentiment === 'negative',
+                  'text-bg-primary': article.sentiment === 'neutral',
+                  'text-bg-warning': article.sentiment === 'mixed',
+                  'text-bg-secondary': !article.sentiment
+                }"
+              >
+                {{ article.sentiment || 'Not analysed' }}
+              </span>
+
+            </div>
+          </div>
+
+          <p class="article-summary mb-3">
+            {{ article.summary || 'No summary available.' }}
+          </p>
+
+          <div class="d-flex flex-wrap gap-2">
+
+            <span
+              *ngFor="let topic of article.topics"
+              class="badge topic-badge rounded-pill"
+            >
+              {{ topic }}
+            </span>
+
+          </div>
+
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <div
+    *ngIf="!loading && !errorMessage && nextCursor"
+    class="d-flex justify-content-center mt-4 mb-5"
+  >
+    <button
+      type="button"
+      class="btn btn-outline-primary btn-lg px-5"
+      (click)="loadMore()"
+      [disabled]="loadingMore"
+    >
+      <span
+        *ngIf="loadingMore"
+        class="spinner-border spinner-border-sm me-2"
+      ></span>
+
+      {{ loadingMore ? 'Loading...' : 'Load More Articles' }}
+    </button>
+  </div>
+</div>
