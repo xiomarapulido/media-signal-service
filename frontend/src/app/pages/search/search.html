@@ -86,12 +86,12 @@
             <div>
 
               <h2 class="h5 fw-bold mb-2">
-                {{ article.headline || 'Untitled article' }}
+                {{ (article.headline | stripHtml) || 'Untitled article' }}
               </h2>
 
               <div class="small text-secondary mb-3">
         <div>
-          <strong>Source:</strong> {{ article.source }}
+          <strong>Source:</strong>  {{ (article.source | stripHtml) || '-' }} 
         </div>
 
         <div>

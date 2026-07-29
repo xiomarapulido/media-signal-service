@@ -7,10 +7,11 @@ import {
   ArticleCursor
 } from '../../models/article';
 import { ArticleService } from '../../services/article.service';
+import { StripHtmlPipe } from '../../pipes/strip-html.pipe';
 
 @Component({
   selector: 'app-search',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, StripHtmlPipe],
   templateUrl: './search.html',
   styleUrl: './search.scss'
 })
