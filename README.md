@@ -1,4 +1,3 @@
-::: {align="center"}
 # 🚀 Media Signal Service - Fullstack Technical Assignment
 
 *A full-stack application that ingests news articles, enriches them
